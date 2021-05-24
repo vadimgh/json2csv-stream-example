@@ -11,7 +11,10 @@ const { AsyncParser } = require('json2csv');
 const { createGzip } = require('zlib');
 const { Readable, Transform } = require('stream');
 const fork = require('child_process').fork;
-const stringnifyPr = fork(path.join(__dirname, '..', 'utils', 'async-strignify.js'));
+const stringnifyPr = fork(
+  path.join(__dirname, '..', 'utils', 'async-strignify.js')
+);
+const { v4: uuidv4 } = require('uuid');
 
 const createCsvMock = async (req, res, next) => {
   try {
@@ -102,16 +105,15 @@ const createZipToResMockWithTrasformStream = async (req, res, next) => {
   }
 };
 
-
 const createZipToResMockWithChildPr = async (req, res, next) => {
   const strignifyCallers = {};
 
   stringnifyPr.on('message', function (message) {
-    if (message.error) strignifyCallers[message.processId].reject(message.error);
+    if (message.error)
+      strignifyCallers[message.processId].reject(message.error);
     strignifyCallers[message.processId].resolve(message.result);
   });
 
-  let processId = 0;
   const strignify = message => {
     return new Promise((resolve, reject) => {
       strignifyCallers[message.processId] = { resolve, reject };
@@ -131,8 +133,7 @@ const createZipToResMockWithChildPr = async (req, res, next) => {
 
     async function* gen(data) {
       for (const item of data) {
-        yield strignify({ data: item, processId });
-        processId++;
+        yield strignify({ data: item, processId: uuidv4() });
       }
     }
 
