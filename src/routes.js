@@ -14,6 +14,10 @@ module.exports = function (app) {
 
   app.get('/api/create-csv', csvCtrl.createCsvMock);
 
+  app.get('/api/create-gzip', csvCtrl.createZipMock);
+
+  app.get('/api/create-res-gzip', csvCtrl.createZipToResMock);
+
   // not found
   app.all('/*', function (req, res) { res.send(404, { success: false, message: 'Not found' }) });
 };
