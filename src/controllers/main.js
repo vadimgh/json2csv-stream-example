@@ -6,7 +6,7 @@
 
 
 const hello = async (req, res) => {
-  res.send(200, { success: false, message: 'Hello' });
+  res.send(200, { success: true, message: 'Hello' });
 };
 
 exports.hello = hello;
